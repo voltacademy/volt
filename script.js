@@ -58,3 +58,30 @@ async function login() {
 
     window.location.href = "community.html";
 }
+async function checkUser() {
+
+    const { data: { user } } =
+        await supabaseClient.auth.getUser();
+
+    if (!user) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    document.getElementById("user").textContent =
+        "Logged in as: " + user.email;
+}
+
+
+async function logout() {
+
+    const { error } =
+        await supabaseClient.auth.signOut();
+
+    if (error) {
+        alert(error.message);
+        return;
+    }
+
+    window.location.href = "index.html";
+}
