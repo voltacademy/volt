@@ -8,15 +8,48 @@
 
     <h1>Welcome to the Community</h1>
 
-    <p id="user">Checking login...</p>
+    <p id="user"></p>
 
     <button onclick="logout()">Logout</button>
+
+    <hr>
+
+    <h2>Create a Post</h2>
+
+    <input
+        id="postTitle"
+        type="text"
+        placeholder="Post title"
+    >
+
+    <br><br>
+
+    <textarea
+        id="postContent"
+        placeholder="Write your post..."
+        rows="6"
+        cols="50"
+    ></textarea>
+
+    <br><br>
+
+    <button onclick="createPost()">Publish Post</button>
+
+    <p id="postMessage"></p>
+
+    <hr>
+
+    <h2>Community Posts</h2>
+
+    <div id="posts"></div>
+
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="script.js"></script>
 
     <script>
         checkUser();
+        loadPosts();
     </script>
 
 </body>
