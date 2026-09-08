@@ -136,6 +136,9 @@ async function createPost() {
 
 async function loadPosts() {
 
+    const { data: { user } } =
+        await supabaseClient.auth.getUser();
+
     const { data, error } =
         await supabaseClient
         .from("posts")
@@ -148,6 +151,64 @@ async function loadPosts() {
         console.log(error);
         return;
     }
+
+    const container =
+        document.getElementById("posts");
+
+    container.innerHTML = "";
+
+    data.forEach(post => {
+
+        let deleteButton = "";
+
+        // Only show Delete for the user's own posts
+        if (user && post.user_id === user.id) {
+            deleteButton = `
+                <button onclick="deletePost(${post.id})">
+                    Delete
+                </button>
+            `;
+        }
+
+        container.innerHTML += `
+            <article>
+                <h3>${post.title}</h3>
+
+                <p>${post.content}</p>
+
+                <small>${post.created_at}</small>
+
+                <br><br>
+
+                ${deleteButton}
+
+                <hr>
+            </article>
+        `;
+    });
+}
+async function deletePost(postId) {
+
+    const confirmDelete =
+        confirm("Are you sure you want to delete this post?");
+
+    if (!confirmDelete) {
+        return;
+    }
+
+    const { error } =
+        await supabaseClient
+        .from("posts")
+        .delete()
+        .eq("id", postId);
+
+    if (error) {
+        alert(error.message);
+        return;
+    }
+
+    loadPosts();
+}
 
     const container =
         document.getElementById("posts");
