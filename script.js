@@ -85,3 +85,84 @@ async function logout() {
 
     window.location.href = "index.html";
 }
+async function createPost() {
+
+    const title =
+        document.getElementById("postTitle").value;
+
+    const content =
+        document.getElementById("postContent").value;
+
+    if (!title || !content) {
+        document.getElementById("postMessage").textContent =
+            "Please enter a title and content.";
+
+        return;
+    }
+
+    const { data: { user } } =
+        await supabaseClient.auth.getUser();
+
+    if (!user) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    const { error } =
+        await supabaseClient
+        .from("posts")
+        .insert({
+            user_id: user.id,
+            title: title,
+            content: content
+        });
+
+    if (error) {
+        document.getElementById("postMessage").textContent =
+            error.message;
+
+        return;
+    }
+
+    document.getElementById("postMessage").textContent =
+        "Post published successfully!";
+
+    document.getElementById("postTitle").value = "";
+    document.getElementById("postContent").value = "";
+
+    loadPosts();
+}
+
+
+async function loadPosts() {
+
+    const { data, error } =
+        await supabaseClient
+        .from("posts")
+        .select("*")
+        .order("created_at", {
+            ascending: false
+        });
+
+    if (error) {
+        console.log(error);
+        return;
+    }
+
+    const container =
+        document.getElementById("posts");
+
+    container.innerHTML = "";
+
+    data.forEach(post => {
+
+        container.innerHTML += `
+            <article>
+                <h3>${post.title}</h3>
+                <p>${post.content}</p>
+                <small>${post.created_at}</small>
+                <hr>
+            </article>
+        `;
+    });
+}
