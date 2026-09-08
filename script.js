@@ -159,17 +159,6 @@ async function loadPosts() {
 
     data.forEach(post => {
 
-        let deleteButton = "";
-
-        // Only show Delete for the user's own posts
-        if (user && post.user_id === user.id) {
-            deleteButton = `
-                <button onclick="deletePost(${post.id})">
-                    Delete
-                </button>
-            `;
-        }
-
         container.innerHTML += `
             <article>
                 <h3>${post.title}</h3>
@@ -180,7 +169,9 @@ async function loadPosts() {
 
                 <br><br>
 
-                ${deleteButton}
+                <button onclick="deletePost(${post.id})">
+                    DELETE THIS POST
+                </button>
 
                 <hr>
             </article>
@@ -188,13 +179,6 @@ async function loadPosts() {
     });
 }
 async function deletePost(postId) {
-
-    const confirmDelete =
-        confirm("Are you sure you want to delete this post?");
-
-    if (!confirmDelete) {
-        return;
-    }
 
     const { error } =
         await supabaseClient
@@ -207,23 +191,7 @@ async function deletePost(postId) {
         return;
     }
 
+    alert("Post deleted!");
+
     loadPosts();
-}
-
-    const container =
-        document.getElementById("posts");
-
-    container.innerHTML = "";
-
-    data.forEach(post => {
-
-        container.innerHTML += `
-            <article>
-                <h3>${post.title}</h3>
-                <p>${post.content}</p>
-                <small>${post.created_at}</small>
-                <hr>
-            </article>
-        `;
-    });
 }
